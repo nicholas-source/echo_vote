@@ -30,3 +30,25 @@
   { proposal-id: uint, option: uint }
   uint
 )
+
+;; Public functions
+(define-public (create-proposal (title (string-utf8 256)) (description (string-utf8 1024)) (start-block uint) (end-block uint))
+  (let
+    (
+      (new-proposal-id (+ (var-get proposal-count) u1))
+    )
+    (asserts! (is-eq tx-sender contract-owner) err-unauthorized)
+    (map-set proposals new-proposal-id
+      {
+        title: title,
+        description: description,
+        creator: tx-sender,
+        start-block: start-block,
+        end-block: end-block,
+        is-active: true
+      }
+    )
+    (var-set proposal-count new-proposal-id)
+    (ok new-proposal-id)
+  )
+)
