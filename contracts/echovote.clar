@@ -52,3 +52,25 @@
     (ok new-proposal-id)
   )
 )
+
+(define-public (vote (proposal-id uint) (vote-option uint))
+  (let
+    (
+      (proposal (unwrap! (map-get? proposals proposal-id) err-proposal-not-active))
+      (current-block block-height)
+    )
+    (asserts! (>= current-block (get start-block proposal)) err-proposal-not-active)
+    (asserts! (<= current-block (get end-block proposal)) err-proposal-not-active)
+    (asserts! (get is-active proposal) err-proposal-not-active)
+    (asserts! (is-none (map-get? votes { proposal-id: proposal-id, voter: tx-sender })) err-already-voted)
+    (asserts! (and (>= vote-option u1) (<= vote-option u5)) err-invalid-vote)
+    
+    (map-set votes { proposal-id: proposal-id, voter: tx-sender } vote-option)
+    (map-set vote-counts
+      { proposal-id: proposal-id, option: vote-option }
+      (+ (default-to u0 (map-get? vote-counts { proposal-id: proposal-id, option: vote-option })) u1)
+    )
+    (ok true)
+  )
+)
+
