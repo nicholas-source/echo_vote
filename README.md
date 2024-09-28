@@ -162,4 +162,3 @@ We welcome contributions to EchoVote! Please see our [ Guide](CONTRIBUTING.md) f
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
