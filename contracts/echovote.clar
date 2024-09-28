@@ -74,3 +74,27 @@
   )
 )
 
+(define-read-only (get-proposal (proposal-id uint))
+  (map-get? proposals proposal-id)
+)
+
+(define-read-only (get-vote (proposal-id uint) (voter principal))
+  (map-get? votes { proposal-id: proposal-id, voter: voter })
+)
+
+(define-read-only (get-vote-count (proposal-id uint) (vote-option uint))
+  (default-to u0 (map-get? vote-counts { proposal-id: proposal-id, option: vote-option }))
+)
+
+(define-read-only (get-total-votes (proposal-id uint))
+  (fold + 
+    (list 
+      (get-vote-count proposal-id u1)
+      (get-vote-count proposal-id u2)
+      (get-vote-count proposal-id u3)
+      (get-vote-count proposal-id u4)
+      (get-vote-count proposal-id u5)
+    )
+    u0
+  )
+)
