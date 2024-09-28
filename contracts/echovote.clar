@@ -1,4 +1,5 @@
-;; echovote.clar
+;; EchoVote: A decentralized voting system
+;; This contract allows for creating, voting on, and managing proposals
 
 ;; Constants
 (define-constant contract-owner tx-sender)
@@ -41,18 +42,22 @@
 )
 
 ;; Private functions
+
+;; Validate text length
 (define-private (validate-text (text (string-utf8 256)))
   (let ((length (len text)))
     (and (> length u0) (<= length u256))
   )
 )
 
+;; Validate long text length
 (define-private (validate-long-text (text (string-utf8 1024)))
   (let ((length (len text)))
     (and (> length u0) (<= length u1024))
   )
 )
 
+;; Validate block range
 (define-private (validate-blocks (start-block uint) (end-block uint))
   (let ((current-block block-height))
     (and 
@@ -62,6 +67,7 @@
   )
 )
 
+;; Increment vote count for a specific option
 (define-private (increment-vote-count (proposal-id uint) (vote-option uint))
   (let
     (
@@ -73,6 +79,7 @@
   )
 )
 
+;; Increment total votes for a proposal
 (define-private (increment-total-votes (proposal-id uint))
   (match (map-get? proposals proposal-id)
     proposal (begin
@@ -86,6 +93,8 @@
 )
 
 ;; Public functions
+
+;; Create a new proposal
 (define-public (create-proposal (title (string-utf8 256)) (description (string-utf8 1024)) (start-block uint) (end-block uint))
   (let
     (
@@ -111,6 +120,7 @@
   )
 )
 
+;; Cast a vote on a proposal
 (define-public (vote (proposal-id uint) (vote-option uint))
   (let
     (
@@ -129,6 +139,7 @@
   )
 )
 
+;; End an active proposal
 (define-public (end-proposal (proposal-id uint))
   (let
     (
@@ -142,18 +153,24 @@
   )
 )
 
+;; Read-only functions
+
+;; Get proposal details
 (define-read-only (get-proposal (proposal-id uint))
   (map-get? proposals proposal-id)
 )
 
+;; Get a user's vote for a proposal
 (define-read-only (get-vote (proposal-id uint) (voter principal))
   (map-get? votes { proposal-id: proposal-id, voter: voter })
 )
 
+;; Get vote count for a specific option
 (define-read-only (get-vote-count (proposal-id uint) (vote-option uint))
   (default-to u0 (map-get? vote-counts { proposal-id: proposal-id, option: vote-option }))
 )
 
+;; Get total votes for a proposal
 (define-read-only (get-total-votes (proposal-id uint))
   (match (map-get? proposals proposal-id)
     proposal (ok (get total-votes proposal))
