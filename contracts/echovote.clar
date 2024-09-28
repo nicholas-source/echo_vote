@@ -11,6 +11,7 @@
 (define-constant err-invalid-start-block (err u106))
 (define-constant err-invalid-end-block (err u107))
 (define-constant err-proposal-ended (err u108))
+(define-constant err-proposal-not-found (err u404))
 
 ;; Data variables
 (define-data-var proposal-count uint u0)
@@ -73,12 +74,14 @@
 )
 
 (define-private (increment-total-votes (proposal-id uint))
-  (let
-    (
-      (proposal (unwrap! (map-get? proposals proposal-id) (err u404)))
-      (new-total (+ (get total-votes proposal) u1))
+  (match (map-get? proposals proposal-id)
+    proposal (begin
+      (map-set proposals proposal-id 
+        (merge proposal { total-votes: (+ (get total-votes proposal) u1) })
+      )
+      true
     )
-    (map-set proposals proposal-id (merge proposal { total-votes: new-total }))
+    false
   )
 )
 
@@ -152,10 +155,8 @@
 )
 
 (define-read-only (get-total-votes (proposal-id uint))
-  (let
-    (
-      (proposal (unwrap! (map-get? proposals proposal-id) (err u404)))
-    )
-    (get total-votes proposal)
+  (match (map-get? proposals proposal-id)
+    proposal (ok (get total-votes proposal))
+    (err err-proposal-not-found)
   )
 )
