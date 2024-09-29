@@ -34,8 +34,8 @@ router.get("/:id", async (req, res) => {
 });
 
 // Placeholder route for proposals (to be implemented later)
-router.get("/", (req, res) => {
-  res.status(200).json({ message: "Proposal routes placeholder" });
-});
+// router.get('/', (req, res) => {
+//   res.status(200).json({ message: 'Proposal routes placeholder' });
+// });
 
 export default router;
