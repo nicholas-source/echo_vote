@@ -29,14 +29,14 @@ We welcome contributions of all kinds to EchoVote! Whether it's improving docume
 
 ### 1. Fork the repository
 
-- Navigate to the [EchoVote repository](https://github.com/nicholas-source/echovote).
+- Navigate to the [EchoVote repository](https://github.com/nicholas-source/echo_vote).
 - Click the "Fork" button in the top-right corner to create your copy of the repository.
 
 ### 2. Clone your fork
 
 - Clone your forked repository to your local machine:
   ```bash
-  git clone https://github.com/nicholas-source/echovote.git
+  git clone https://github.com/nicholas-source/echo_vote.git
   cd echovote
   ```
 
