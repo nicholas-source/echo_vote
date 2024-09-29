@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 // Route to get a proposal by ID
 router.get("/:id", async (req, res) => {
   try {
-    const proposal = await getProposal(parseInt(req.params.id));
+    const proposal = await getProposal(parseInt(req.params.id, 10)); // Fixed bug in proposal ID parsing
     if (proposal) {
       res.json(proposal);
     } else {
