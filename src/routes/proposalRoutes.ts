@@ -3,6 +3,7 @@ import { createProposal, getProposal } from "../services/proposalService";
 
 const router = express.Router();
 
+// Route to create a new proposal
 router.post("/", async (req, res) => {
   try {
     const { title, description, startBlock, endBlock } = req.body;
@@ -18,6 +19,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Route to get a proposal by ID
 router.get("/:id", async (req, res) => {
   try {
     const proposal = await getProposal(parseInt(req.params.id));

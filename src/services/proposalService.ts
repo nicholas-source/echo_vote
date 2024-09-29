@@ -14,6 +14,7 @@ const senderAddress = getAddressFromPrivateKey(
   network.version
 );
 
+// Function to create a new proposal
 export async function createProposal(
   title: string,
   description: string,
@@ -39,6 +40,7 @@ export async function createProposal(
   return cvToJSON(result);
 }
 
+// Function to get a proposal by ID
 export async function getProposal(proposalId: number) {
   const result = await callReadOnlyFunction({
     contractAddress: CONFIG.CONTRACT_ADDRESS!,
