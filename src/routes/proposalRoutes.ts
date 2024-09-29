@@ -1,10 +1,10 @@
 import express from "express";
 import { createProposal, getProposal } from "../services/proposalService";
-import { validateRequest } from "../middleware/validateRequest";
+
 const router = express.Router();
 
 // Route to create a new proposal
-router.post("/", validateRequest, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { title, description, startBlock, endBlock } = req.body;
     const result = await createProposal(
