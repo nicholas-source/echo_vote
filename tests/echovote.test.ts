@@ -9,3 +9,12 @@ const wallet2 = accounts.get("wallet_2")!;
 describe("EchoVote", () => {
   const CONTRACT_NAME = "echovote";
 });
+
+describe("EchoVote", () => {
+  const CONTRACT_NAME = "echovote";
+
+  beforeEach(() => {
+    // Reset the blockchain state before each test
+    simnet.mineEmptyBlock(1);
+  });
+});
