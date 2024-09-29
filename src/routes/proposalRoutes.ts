@@ -17,3 +17,18 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.get("/:id", async (req, res) => {
+  try {
+    const proposal = await getProposal(parseInt(req.params.id));
+    if (proposal) {
+      res.json(proposal);
+    } else {
+      res.status(404).json({ error: "Proposal not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+export default router;

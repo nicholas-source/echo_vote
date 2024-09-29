@@ -38,3 +38,16 @@ export async function createProposal(
 
   return cvToJSON(result);
 }
+
+export async function getProposal(proposalId: number) {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONFIG.CONTRACT_ADDRESS!,
+    contractName: CONFIG.CONTRACT_NAME!,
+    functionName: "get-proposal",
+    functionArgs: [uintCV(proposalId)],
+    senderAddress,
+    network,
+  });
+
+  return cvToJSON(result);
+}
