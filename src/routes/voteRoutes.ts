@@ -5,12 +5,26 @@ import {
   getVoteCount,
   getTotalVotes,
 } from "../services/voteService";
+import { body, validationResult } from "express-validator";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
     const { proposalId, voteOption } = req.body;
+
+    // Validate input data
+    await Promise.all([
+      body("proposalId").isInt().run(req),
+      body("voteOption").isInt().run(req),
+    ]);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Cast vote and return result
     const result = await castVote(proposalId, voteOption);
     res.status(201).json(result);
   } catch (error) {

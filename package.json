@@ -14,9 +14,11 @@
   "dependencies": {
     "@hirosystems/clarinet-sdk": "^2.3.2",
     "@stacks/transactions": "^6.12.0",
+    "@types/express-validator": "^3.0.0",
     "chokidar-cli": "^3.0.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-validator": "^7.2.0",
     "joi": "^17.13.3",
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
