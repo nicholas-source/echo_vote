@@ -61,9 +61,21 @@
 (define-private (validate-blocks (start-block uint) (end-block uint))
   (let ((current-block block-height))
     (and 
-      (> start-block current-block)
+      (>= start-block current-block)
       (> end-block start-block)
     )
+  )
+)
+
+;; Check if proposal is active
+(define-private (is-proposal-active (proposal-id uint))
+  (match (map-get? proposals proposal-id)
+    proposal (and 
+               (get is-active proposal)
+               (>= block-height (get start-block proposal))
+               (< block-height (get end-block proposal))
+             )
+    false
   )
 )
 
@@ -124,12 +136,9 @@
 (define-public (vote (proposal-id uint) (vote-option uint))
   (let
     (
-      (proposal (unwrap! (map-get? proposals proposal-id) err-proposal-not-active))
-      (current-block block-height)
+      (proposal (unwrap! (map-get? proposals proposal-id) err-proposal-not-found))
     )
-    (asserts! (>= current-block (get start-block proposal)) err-proposal-not-active)
-    (asserts! (<= current-block (get end-block proposal)) err-proposal-ended)
-    (asserts! (get is-active proposal) err-proposal-not-active)
+    (asserts! (is-proposal-active proposal-id) err-proposal-not-active)
     (asserts! (is-none (map-get? votes { proposal-id: proposal-id, voter: tx-sender })) err-already-voted)
     (asserts! (and (>= vote-option u1) (<= vote-option u5)) err-invalid-vote)
     
@@ -143,11 +152,10 @@
 (define-public (end-proposal (proposal-id uint))
   (let
     (
-      (proposal (unwrap! (map-get? proposals proposal-id) err-proposal-not-active))
-      (current-block block-height)
+      (proposal (unwrap! (map-get? proposals proposal-id) err-proposal-not-found))
     )
     (asserts! (is-eq tx-sender contract-owner) err-unauthorized)
-    (asserts! (>= current-block (get end-block proposal)) err-proposal-not-active)
+    (asserts! (>= block-height (get end-block proposal)) err-proposal-not-active)
     (map-set proposals proposal-id (merge proposal { is-active: false }))
     (ok true)
   )
@@ -157,17 +165,17 @@
 
 ;; Get proposal details
 (define-read-only (get-proposal (proposal-id uint))
-  (map-get? proposals proposal-id)
+  (ok (unwrap! (map-get? proposals proposal-id) err-proposal-not-found))
 )
 
 ;; Get a user's vote for a proposal
 (define-read-only (get-vote (proposal-id uint) (voter principal))
-  (map-get? votes { proposal-id: proposal-id, voter: voter })
+  (ok (map-get? votes { proposal-id: proposal-id, voter: voter }))
 )
 
 ;; Get vote count for a specific option
 (define-read-only (get-vote-count (proposal-id uint) (vote-option uint))
-  (default-to u0 (map-get? vote-counts { proposal-id: proposal-id, option: vote-option }))
+  (ok (default-to u0 (map-get? vote-counts { proposal-id: proposal-id, option: vote-option })))
 )
 
 ;; Get total votes for a proposal
